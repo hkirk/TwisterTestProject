@@ -43,7 +43,6 @@ public class Twister
                 Thread.Sleep(sleepTime);
             }
         }
-
     
         public bool writeRegister(byte addr, byte value)
         {
@@ -56,24 +55,6 @@ public class Twister
 
             return value == readBuffer[0];
         }
-
-        public void WriteRead(byte[] writeBuffer, byte[] readBuffer)
-        {
-            retryOperation(() =>
-            {
-                _i2C.WriteRead(writeBuffer, readBuffer);
-            });
-        }
-
-        public void Write(byte[] writeBuffer)
-        {
-            retryOperation(() =>
-            {
-                _i2C.Write(writeBuffer);
-            });
-
-        }
-
     }
 
     private enum encoderRegisters
@@ -108,17 +89,15 @@ public class Twister
 
     public bool isMoved()
     {
-        byte[] writeBuffer = { Convert.ToByte(encoderRegisters.TWIST_STATUS) }, readBuffer = new byte[1];
-        _i2cWrapper.WriteRead(writeBuffer, readBuffer);
- 
-        bool pressed = (readBuffer[0] & (1 << statusEncoderMoveBit)) != 0;
 
-        Array.Resize(ref writeBuffer, 2);
-        writeBuffer[1] = (byte)(readBuffer[0] & ~(1 << statusEncoderMoveBit));
+        byte status = _i2cWrapper.readRegister(Convert.ToByte(encoderRegisters.TWIST_STATUS));
+        byte statusMoved = (1 << statusEncoderMoveBit);
+        bool moved = (status & statusMoved) != 0;
+        byte reset = (byte)(status & (~statusMoved));
 
-        _i2cWrapper.Write(writeBuffer);
+        _i2cWrapper.writeRegister(Convert.ToByte(encoderRegisters.TWIST_STATUS), reset);
 
-        return pressed;
+        return moved;
     }
     
     public bool isClicked()
