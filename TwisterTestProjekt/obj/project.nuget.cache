@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "62vQopxgMQNAZcxreXGbPDPTaplffJ8J5KGe+e2f4EoXvrsr8T811fOEo5Q7vnM17lbdQmEhrfOs3Emi9rQZiQ==",
+  "success": true,
+  "projectFilePath": "/Users/au181645/source/ASE/ST3PRJ3/TwisterTestProjekt/TwisterTestProjekt/TwisterTestProjekt.csproj",
+  "expectedPackageFiles": [
+    "/Users/au181645/.nuget/packages/system.device.gpio/3.1.0/system.device.gpio.3.1.0.nupkg.sha512"
+  ],
+  "logs": []
+}
