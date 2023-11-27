@@ -20,34 +20,60 @@ public class Twister
         {
             byte[] writeBuffer = { addr }, readBuffer = new byte[1];
 
-            _i2C.WriteRead(writeBuffer, readBuffer);
-            Thread.Sleep(sleepTime);
+            retryOperation(() =>
+            {
+                _i2C.WriteRead(writeBuffer, readBuffer);
+                Thread.Sleep(sleepTime);
+            });
 
             return readBuffer[0];
         }
+        
+        private void retryOperation(Action action)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception)
+            {
+                action();
+            }
+        }
+
     
         public bool writeRegister(byte addr, byte value)
         {
             byte[] writeBuffer = { (byte)addr, (byte)value }, readBuffer = new byte[1];
-
-            _i2C.WriteRead(writeBuffer, readBuffer);
-            Thread.Sleep(sleepTime);
+            
+            retryOperation(() =>
+            {
+                _i2C.WriteRead(writeBuffer, readBuffer);
+                Thread.Sleep(sleepTime);
+            });
 
             return value == readBuffer[0];
         }
 
         public void WriteRead(byte[] writeBuffer, byte[] readBuffer)
         {
-            _i2C.WriteRead(writeBuffer, readBuffer);
-            Thread.Sleep(sleepTime);
+            retryOperation(() =>
+            {
+                _i2C.WriteRead(writeBuffer, readBuffer);
+                Thread.Sleep(sleepTime);
+            });
         }
 
         public void Write(byte[] writeBuffer)
         {
-            _i2C.Write(writeBuffer);
-            Thread.Sleep(sleepTime);
+            retryOperation(() =>
+            {
+                _i2C.Write(writeBuffer);
+                Thread.Sleep(sleepTime);
+            });
 
         }
+
     }
 
     private enum encoderRegisters
