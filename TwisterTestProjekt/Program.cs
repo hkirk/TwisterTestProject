@@ -7,7 +7,7 @@ Console.WriteLine("Hello, World!");
 
 var twist = new Twister();
 
-int sleepTime = 100;
+int sleepTime = 40;
 int i = 0;
 
 
@@ -23,10 +23,10 @@ while (true)
         {
             i++;
             //lcd.Clear();
-            Thread.Sleep(sleepTime);
+            //Thread.Sleep(sleepTime);
             //lcd.Write(Convert.ToString(i));
             Console.WriteLine(Convert.ToString(i));
-            Thread.Sleep(sleepTime);
+            //Thread.Sleep(sleepTime);
         }
 
         bool clicking = twist.isClicked();
@@ -34,10 +34,10 @@ while (true)
         if (clicking)
         {
             //lcd.Clear();
-            Thread.Sleep(sleepTime);
+            //Thread.Sleep(sleepTime);
             Console.WriteLine("Valgt:" + Convert.ToString(i));
             //lcd.Write("Valgt:" + Convert.ToString(i));
-            Thread.Sleep(sleepTime);
+            //Thread.Sleep(sleepTime);
         }
     }
 
