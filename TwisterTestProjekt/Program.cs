@@ -13,8 +13,6 @@ int i = 0;
 
 while (true)
 {
-    //i2cQueue.Enqueue(() =>
-    //{
     try
     {
         bool moving = twist.isMoved();
@@ -22,22 +20,14 @@ while (true)
         if (moving)
         {
             i++;
-            //lcd.Clear();
-            //Thread.Sleep(sleepTime);
-            //lcd.Write(Convert.ToString(i));
             Console.WriteLine(Convert.ToString(i));
-            //Thread.Sleep(sleepTime);
         }
 
         bool clicking = twist.isClicked();
         Thread.Sleep(sleepTime);
         if (clicking)
         {
-            //lcd.Clear();
-            //Thread.Sleep(sleepTime);
             Console.WriteLine("Valgt:" + Convert.ToString(i));
-            //lcd.Write("Valgt:" + Convert.ToString(i));
-            //Thread.Sleep(sleepTime);
         }
     }
 
