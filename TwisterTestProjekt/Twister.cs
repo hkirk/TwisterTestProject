@@ -1,4 +1,5 @@
 using System.Device.I2c;
+using System.Net.Http.Headers;
 
 namespace TwisterTestProjekt;
 
@@ -37,8 +38,9 @@ public class Twister
             }
             catch (Exception)
             {
-                action();
                 Thread.Sleep(sleepTime*sleepTime);
+                action();
+                Thread.Sleep(sleepTime);
             }
         }
 
