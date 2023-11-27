@@ -4,7 +4,51 @@ namespace TwisterTestProjekt;
 
 public class Twister
 {
-    private I2cDevice _i2C;
+    private class I2CWRapper
+    {
+        private I2cDevice _i2C;
+        private int sleepTime = 4;
+
+        public I2CWRapper()
+        {
+            I2cConnectionSettings i2cS = new I2cConnectionSettings(1, 0x3F);
+            _i2C = I2cDevice.Create(i2cS);
+            
+        }
+        
+        public byte readRegister(byte addr)
+        {
+            byte[] writeBuffer = { addr }, readBuffer = new byte[1];
+
+            _i2C.WriteRead(writeBuffer, readBuffer);
+            Thread.Sleep(sleepTime);
+
+            return readBuffer[0];
+        }
+    
+        public bool writeRegister(byte addr, byte value)
+        {
+            byte[] writeBuffer = { (byte)addr, (byte)value }, readBuffer = new byte[1];
+
+            _i2C.WriteRead(writeBuffer, readBuffer);
+            Thread.Sleep(sleepTime);
+
+            return value == readBuffer[0];
+        }
+
+        public void WriteRead(byte[] writeBuffer, byte[] readBuffer)
+        {
+            _i2C.WriteRead(writeBuffer, readBuffer);
+            Thread.Sleep(sleepTime);
+        }
+
+        public void Write(byte[] writeBuffer)
+        {
+            _i2C.Write(writeBuffer);
+            Thread.Sleep(sleepTime);
+
+        }
+    }
 
     private enum encoderRegisters
     {
@@ -34,60 +78,35 @@ public class Twister
     private const byte statusButtonPressedBit = 1;
     private const byte statusEncoderMoveBit = 0;
 
-    public Twister()
-    {
-        I2cConnectionSettings i2cS = new I2cConnectionSettings(1, 0x3F);
-        _i2C = I2cDevice.Create(i2cS);
-    }
+    private I2CWRapper _i2cWrapper = new();
 
     public bool isMoved()
     {
         byte[] writeBuffer = { Convert.ToByte(encoderRegisters.TWIST_STATUS) }, readBuffer = new byte[1];
-        _i2C.WriteRead(writeBuffer, readBuffer);
-        Thread.Sleep(4);
-
+        _i2cWrapper.WriteRead(writeBuffer, readBuffer);
+ 
         bool pressed = (readBuffer[0] & (1 << statusEncoderMoveBit)) != 0;
 
         Array.Resize(ref writeBuffer, 2);
         writeBuffer[1] = (byte)(readBuffer[0] & ~(1 << statusEncoderMoveBit));
 
-        _i2C.Write(writeBuffer);
-        Thread.Sleep(4);
+        _i2cWrapper.Write(writeBuffer);
 
         return pressed;
     }
     
     public bool isClicked()
     {
-        byte status = readRegister(Convert.ToByte(encoderRegisters.TWIST_STATUS));
+        byte status = _i2cWrapper.readRegister(Convert.ToByte(encoderRegisters.TWIST_STATUS));
         byte statusClicked = (1 << statusButtonClickedBit);
         bool pressed = (status & statusClicked) != 0;
         byte reset = (byte)(status & (~statusClicked));
 
-        //Console.WriteLine("Clicked: {0:X}\t{1:X}\t{2:X}\t{3:X}\tOk", statusClicked, (status & statusClicked), statusButtonClickedBit, status);
-        Thread.Sleep(4);
-
-        writeRegister(Convert.ToByte(encoderRegisters.TWIST_STATUS), reset);
-        Thread.Sleep(4);
+        _i2cWrapper.writeRegister(Convert.ToByte(encoderRegisters.TWIST_STATUS), reset);
 
         return pressed;
     }
     
-    private byte readRegister(byte addr)
-    {
-        byte[] writeBuffer = { addr }, readBuffer = new byte[1];
 
-        _i2C.WriteRead(writeBuffer, readBuffer);
-        return readBuffer[0];
-    }
-    
-    private bool writeRegister(byte addr, byte value)
-    {
-        byte[] writeBuffer = { (byte)addr, (byte)value }, readBuffer = new byte[1];
-
-        _i2C.WriteRead(writeBuffer, readBuffer);
-
-        return value == readBuffer[0];
-    }
 
 }
