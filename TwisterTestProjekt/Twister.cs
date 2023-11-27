@@ -23,7 +23,6 @@ public class Twister
             retryOperation(() =>
             {
                 _i2C.WriteRead(writeBuffer, readBuffer);
-                Thread.Sleep(sleepTime);
             });
 
             return readBuffer[0];
@@ -34,10 +33,12 @@ public class Twister
             try
             {
                 action();
+                Thread.Sleep(sleepTime);
             }
             catch (Exception)
             {
                 action();
+                Thread.Sleep(sleepTime*sleepTime);
             }
         }
 
@@ -49,7 +50,6 @@ public class Twister
             retryOperation(() =>
             {
                 _i2C.WriteRead(writeBuffer, readBuffer);
-                Thread.Sleep(sleepTime);
             });
 
             return value == readBuffer[0];
@@ -60,7 +60,6 @@ public class Twister
             retryOperation(() =>
             {
                 _i2C.WriteRead(writeBuffer, readBuffer);
-                Thread.Sleep(sleepTime);
             });
         }
 
@@ -69,7 +68,6 @@ public class Twister
             retryOperation(() =>
             {
                 _i2C.Write(writeBuffer);
-                Thread.Sleep(sleepTime);
             });
 
         }
