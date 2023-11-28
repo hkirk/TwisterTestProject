@@ -89,33 +89,41 @@ public class Twister
 
     public bool isMoved()
     {
-        Console.WriteLine("<isMoved>");
         byte status = _i2cWrapper.readRegister(Convert.ToByte(encoderRegisters.TWIST_STATUS));
-        Console.WriteLine(status.ToString());
         byte statusMoved = (1 << statusEncoderMoveBit);
         bool moved = (status & statusMoved) != 0;
         byte reset = (byte)(status & (~statusMoved));
-        Console.WriteLine(reset.ToString());
+
+        if (moved)
+        {
+            Console.WriteLine("<isMoved>");
+            Console.WriteLine(status.ToString());
+            Console.WriteLine(reset.ToString());
+            Console.WriteLine("</isMoved>");
+        }
 
         _i2cWrapper.writeRegister(Convert.ToByte(encoderRegisters.TWIST_STATUS), reset);
-        Console.WriteLine("</isMoved>");
 
         return moved;
     }
     
     public bool isClicked()
     {
-        Console.WriteLine("<isClicked>");
 
         byte status = _i2cWrapper.readRegister(Convert.ToByte(encoderRegisters.TWIST_STATUS));
-        Console.WriteLine(status.ToString());
         byte statusClicked = (1 << statusButtonClickedBit);
         bool pressed = (status & statusClicked) != 0;
         byte reset = (byte)(status & (~statusClicked));
-        Console.WriteLine(reset.ToString());
+
+        if (pressed)
+        {
+            Console.WriteLine("<isClicked>");
+            Console.WriteLine(status.ToString());
+            Console.WriteLine(reset.ToString());
+            Console.WriteLine("</isClicked>");
+        }
 
         _i2cWrapper.writeRegister(Convert.ToByte(encoderRegisters.TWIST_STATUS), reset);
-        Console.WriteLine("</isClicked>");
 
         return pressed;
     }
