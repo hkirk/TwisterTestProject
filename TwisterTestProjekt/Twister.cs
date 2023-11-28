@@ -5,6 +5,7 @@ namespace TwisterTestProjekt;
 
 public class Twister
 {
+    private static bool DEBUG = true;
     private class I2CWRapper
     {
         private I2cDevice _i2C;
@@ -92,9 +93,9 @@ public class Twister
         byte status = _i2cWrapper.readRegister(Convert.ToByte(encoderRegisters.TWIST_STATUS));
         byte statusMoved = (1 << statusEncoderMoveBit);
         bool moved = (status & statusMoved) != 0;
-        byte reset = (byte)(status & (~statusMoved));
+        byte reset = 0;
 
-        if (moved)
+        if (DEBUG && moved)
         {
             Console.WriteLine("<isMoved>");
             Console.WriteLine(status.ToString());
@@ -113,9 +114,9 @@ public class Twister
         byte status = _i2cWrapper.readRegister(Convert.ToByte(encoderRegisters.TWIST_STATUS));
         byte statusClicked = (1 << statusButtonClickedBit);
         bool pressed = (status & statusClicked) != 0;
-        byte reset = (byte)(status & (~statusClicked));
+        byte reset = 0;
 
-        if (pressed)
+        if (DEBUG && pressed)
         {
             Console.WriteLine("<isClicked>");
             Console.WriteLine(status.ToString());
